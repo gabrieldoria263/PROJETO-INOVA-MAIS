@@ -42,7 +42,7 @@ Este projeto é um sistema simples para gerenciamento de **pacientes**, **atendi
 
 1. **Clone o repositório:**
 
-```bash
+``bash
 git clone https://github.com/gabrieldoria263/PROJETO-INOVA-MAIS.git
 cd sistema-pacientes
 
