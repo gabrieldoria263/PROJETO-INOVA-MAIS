@@ -1,4 +1,4 @@
-# 🏥  Inova Mais
+# 🏥  Inova Mais - sistema de cadastramento
 
 ## 📋 Descrição do Projeto
 
