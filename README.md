@@ -61,9 +61,11 @@ cd sistema-pacientes
 
 2.**Execute o sistema:**
 
-python sistema.py
+python main.py
 
-3. **Você também pode executar o sistema localmente utilizando o **Visual Studio Code (VS Code)**, siga os seguintes passos:**
+3. Siga o menu interativo no terminal.
+
+4. **Você também pode executar o sistema localmente utilizando o **Visual Studio Code (VS Code)**, siga os seguintes passos:**
 
 -  Certifique-se de ter o **Python** e o **pip** instalados em sua máquina.
 -  Abra o VS Code e clone este repositório utilizando a função "Clone Git Repository...".
