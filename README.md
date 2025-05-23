@@ -103,6 +103,6 @@ Data,CartaoSUS,Tipo,Observacoes
 - Os dados são persistidos em arquivos .csv, então não é necessário banco de dados.
 
 ## 🧑‍💻 Autores
-Desenvolvido por Alunos do IFS: Rosevaldo, Gabriel, Willian, Antonio, Josivaio, Jailton, Geilson e Cristiano
+Desenvolvido por Alunos do IFS: Rosevaldo, Gabriel, Willian, Antonio, Josivanio, Jailton, Geilson e Cristiano
 
 Contribuições são bem-vindas!
