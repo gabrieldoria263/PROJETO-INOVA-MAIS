@@ -20,6 +20,19 @@ Este projeto é um sistema simples para gerenciamento de **pacientes**, **atendi
 
 ---
 
+## 📂 Estrutura do Projeto
+
+SistemaAtendimento/
+├── main.py                 # Ponto de entrada do sistema
+├── arquivos.py             # Inicialização e manipulação de arquivos CSV
+├── pacientes.py            # Cadastro, edição e exclusão de pacientes
+├── atendimentos.py         # Registro manual ou importação de atendimentos
+├── relatorios.py           # Geração de relatórios diversos
+├── pacientes.csv           # Arquivo com dados dos pacientes
+├── atendimentos.csv        # Arquivo com dados dos atendimentos
+└── relatorios/             # Diretório onde os relatórios são salvos
+
+---
 ## 📁 Estrutura dos Arquivos
 
 - `pacientes.csv`: Contém os dados dos pacientes
