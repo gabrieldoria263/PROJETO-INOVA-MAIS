@@ -1,71 +1,61 @@
-# 🏥  Inova Mais - sistema de cadastramento
+#🏥 Sistema de Gestão de Pacientes - UBS
+Este é um sistema simples de gerenciamento de pacientes e atendimentos desenvolvido em Python, com armazenamento em arquivos .csv. Ele é voltado para pequenas unidades de saúde (como UBS) que precisam registrar dados de pacientes e atendimentos de forma organizada e segura.
 
-## 📋 Descrição do Projeto
+##📂 Estrutura do Projeto
 
-Este projeto é um sistema simples para gerenciamento de **pacientes**, **atendimentos** e **relatórios médicos** utilizando arquivos CSV. É uma solução leve e prática para pequenas unidades de saúde, clínicas ou postos de atendimento.
-
----
-
-## 📋 Funcionalidades
-
-- Cadastro, edição e exclusão de pacientes
-- Registro manual de atendimentos
-- Importação de atendimentos via arquivo `.csv`
-- Geração de relatórios:
-  - Pacientes atendidos em um período
-  - Quantidade por tipo de atendimento
-  - Atendimentos por bairro
-  - Histórico completo de um paciente
-- Exportação de relatórios em `.csv` ou `.txt`
-
----
-
-## 📂 Estrutura do Projeto
-
-SistemaAtendimento/
-├── main.py                 # Ponto de entrada do sistema
+PROJETO-INOVA-MAIS/
+│
 ├── arquivos.py             # Inicialização e manipulação de arquivos CSV
 ├── pacientes.py            # Cadastro, edição e exclusão de pacientes
-├── atendimentos.py         # Registro manual ou importação de atendimentos
+├── atendimentos.py         # Registro, importação e exclusão de atendimentos
 ├── relatorios.py           # Geração de relatórios diversos
-├── pacientes.csv           # Arquivo com dados dos pacientes
-├── atendimentos.csv        # Arquivo com dados dos atendimentos
-└── relatorios/             # Diretório onde os relatórios são salvos
+├── main.py                 # Interface principal e menu do sistema
+├── pacientes.csv           # Armazena dados dos pacientes
+├── atendimentos.csv        # Armazena registros de atendimentos
+└── relatorios/             # Pasta gerada automaticamente com os relatórios salvos
 
----
-## 📁 Estrutura dos Arquivos
+##✅ Funcionalidades
+👤 Pacientes
+- Cadastro de novos pacientes
 
-- `pacientes.csv`: Contém os dados dos pacientes
-- `atendimentos.csv`: Registra os atendimentos realizados
-- `relatorios/`: Pasta onde são salvos os relatórios gerados
+- Edição dos dados de pacientes existentes
 
----
+- Exclusão de pacientes e seus atendimentos
 
-## 🛠️ Tecnologias Utilizadas
+🩺 Atendimentos
+- Registro manual de atendimentos
 
-- Python 3.x
-- Módulos padrão:
-  - `csv`
-  - `datetime`
-  - `os`
+- Importação de atendimentos via arquivo .csv
 
----
+- Exclusão individual de atendimentos por Cartão SUS e data
 
-## 🚀 Como Usar
+📊 Relatórios
+- Pacientes atendidos em um período específico
 
-1. **Clone o repositório:**
+- Contagem por tipo de atendimento (ex: consulta, vacina)
 
-``bash
-git clone https://github.com/gabrieldoria263/PROJETO-INOVA-MAIS.git
-cd sistema-pacientes
+- Número de atendimentos por bairro
 
-2.**Execute o sistema:**
+- Histórico completo de atendimentos de um paciente
 
+  ##🔒 Autenticação
+Ao iniciar o sistema, o usuário deve fazer login com as seguintes credenciais:
+
+- Usuário: admin
+
+- Senha: UBS2025
+
+Limite de 3 tentativas antes do encerramento automático do programa.
+
+##▶️ Como executar
+1- Certifique-se de que você possui Python 3 instalado.
+
+2- Instale o projeto em um diretório local.
+
+3- Execute o arquivo principal:
 python main.py
 
-3. Siga o menu interativo no terminal.
-
-4. **Você também pode executar o sistema localmente utilizando o **Visual Studio Code (VS Code)**, siga os seguintes passos:**
+4- **Você também pode executar o sistema localmente utilizando o **Visual Studio Code (VS Code)**, siga os seguintes passos:**
 
 -  Certifique-se de ter o **Python** e o **pip** instalados em sua máquina.
 -  Abra o VS Code e clone este repositório utilizando a função "Clone Git Repository...".
@@ -76,33 +66,26 @@ python main.py
 
 **Dica para VS Code:** Você pode configurar um ambiente de execução (Run and Debug) no VS Code para facilitar o debug e a execução do seu projeto Python diretamente no terminal. Consulte a documentação do VS Code para Python para mais detalhes.
 
-## 🖼️ Exemplo de Uso
-Ao rodar o script, você verá um menu interativo como este:
+##📝 Requisitos
+- Python 3.6 ou superior
 
---- MENU PRINCIPAL ---
-1. Cadastrar paciente
-2. Editar paciente
-3. Excluir paciente
-4. Registrar atendimento manual
-5. Importar atendimentos via CSV
-6. Relatórios
-7. Sair
+- Sistema operacional compatível com arquivos .csv (Windows, Linux, MacOS)
 
-## 🧪 Teste com Arquivo de Importação
-Você pode importar atendimentos com um arquivo .csv no seguinte formato:
+##📦 Exemplo de Importação de Atendimentos (.csv)
+O arquivo CSV para importação deve seguir o seguinte formato (com cabeçalho):
 
+swift
 Data,CartaoSUS,Tipo,Observacoes
-12/05/2024,123456789012345,Consulta,Gripe
-15/05/2024,987654321098765,Vacinação,Influenza
+01/05/2025,123456789012345,Consulta,Paciente com dor de cabeça
+03/05/2025,987654321098765,Vacinação,Dose de reforço aplicada
 
-## 📌 Observações
-- O Cartão SUS deve ser único para cada paciente.
+##📁 Relatórios
+Os relatórios gerados são salvos na pasta relatorios/, podendo ser exportados em .csv ou .txt com formatação adequada para impressão ou análise.
 
-- As datas devem estar no formato DD/MM/AAAA.
+##💡 Objetivo do Projeto
+Este sistema foi desenvolvido como parte de um projeto acadêmico para a disciplina de Gerenciamento de Projetos, com foco em inovação e uso de tecnologias simples e acessíveis para facilitar o atendimento à população em unidades de saúde públicas.
 
-- Os dados são persistidos em arquivos .csv, então não é necessário banco de dados.
-
-## 🧑‍💻 Autores
-Desenvolvido por Alunos do IFS: Rosevaldo, Gabriel, Willian, Antonio, Josivanio, Jailton, Geilson e Cristiano
-
-Contribuições são bem-vindas!
+##👨‍💻 Autores
+Nome: Rosevaldo, Gabriel, Willian, Antonio, Josivanio, Jailton, Geilson e Cristiano
+Instituição: Instituto Federal de Sergipe (IFS)
+Ano: 2025
