@@ -1,7 +1,7 @@
-#🏥 Sistema de Gestão de Pacientes - UBS
+# 🏥 Sistema de Gestão de Pacientes - UBS
 Este é um sistema simples de gerenciamento de pacientes e atendimentos desenvolvido em Python, com armazenamento em arquivos .csv. Ele é voltado para pequenas unidades de saúde (como UBS) que precisam registrar dados de pacientes e atendimentos de forma organizada e segura.
 
-##📂 Estrutura do Projeto
+## 📂 Estrutura do Projeto
 
 PROJETO-INOVA-MAIS/
 │
@@ -14,7 +14,7 @@ PROJETO-INOVA-MAIS/
 ├── atendimentos.csv        # Armazena registros de atendimentos
 └── relatorios/             # Pasta gerada automaticamente com os relatórios salvos
 
-##✅ Funcionalidades
+## ✅ Funcionalidades
 👤 Pacientes
 - Cadastro de novos pacientes
 
@@ -38,7 +38,7 @@ PROJETO-INOVA-MAIS/
 
 - Histórico completo de atendimentos de um paciente
 
-  ##🔒 Autenticação
+## 🔒 Autenticação
 Ao iniciar o sistema, o usuário deve fazer login com as seguintes credenciais:
 
 - Usuário: admin
@@ -47,7 +47,7 @@ Ao iniciar o sistema, o usuário deve fazer login com as seguintes credenciais:
 
 Limite de 3 tentativas antes do encerramento automático do programa.
 
-##▶️ Como executar
+## ▶️ Como executar
 1- Certifique-se de que você possui Python 3 instalado.
 
 2- Instale o projeto em um diretório local.
@@ -66,12 +66,12 @@ python main.py
 
 **Dica para VS Code:** Você pode configurar um ambiente de execução (Run and Debug) no VS Code para facilitar o debug e a execução do seu projeto Python diretamente no terminal. Consulte a documentação do VS Code para Python para mais detalhes.
 
-##📝 Requisitos
+## 📝 Requisitos
 - Python 3.6 ou superior
 
 - Sistema operacional compatível com arquivos .csv (Windows, Linux, MacOS)
 
-##📦 Exemplo de Importação de Atendimentos (.csv)
+## 📦 Exemplo de Importação de Atendimentos (.csv)
 O arquivo CSV para importação deve seguir o seguinte formato (com cabeçalho):
 
 swift
@@ -79,13 +79,13 @@ Data,CartaoSUS,Tipo,Observacoes
 01/05/2025,123456789012345,Consulta,Paciente com dor de cabeça
 03/05/2025,987654321098765,Vacinação,Dose de reforço aplicada
 
-##📁 Relatórios
+## 📁 Relatórios
 Os relatórios gerados são salvos na pasta relatorios/, podendo ser exportados em .csv ou .txt com formatação adequada para impressão ou análise.
 
-##💡 Objetivo do Projeto
+## 💡 Objetivo do Projeto
 Este sistema foi desenvolvido como parte de um projeto acadêmico para a disciplina de Gerenciamento de Projetos, com foco em inovação e uso de tecnologias simples e acessíveis para facilitar o atendimento à população em unidades de saúde públicas.
 
-##👨‍💻 Autores
+## 👨‍💻 Autores
 Nome: Rosevaldo, Gabriel, Willian, Antonio, Josivanio, Jailton, Geilson e Cristiano
 Instituição: Instituto Federal de Sergipe (IFS)
 Ano: 2025
