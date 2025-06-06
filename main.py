@@ -1,39 +1,27 @@
 from arquivos import inicializar_arquivos
 from pacientes import cadastrar_paciente, editar_paciente, excluir_paciente
 from atendimentos import registrar_atendimento_manual, importar_atendimentos_csv
-from relatorios import (
-    relatorio_pacientes_por_periodo,
-    relatorio_tipo_atendimento,
-    relatorio_atendimentos_por_bairro,
-    relatorio_historico_paciente
-)
+from relatorios import menu_relatorios
 
-def menu_relatorios():
-    while True:
-        print("\n--- RELATÓRIOS ---")
-        print("1. Pacientes atendidos em período")
-        print("2. Quantidade por tipo de atendimento")
-        print("3. Número de atendimentos por bairro")
-        print("4. Histórico por paciente")
-        print("5. Voltar")
-        opcao = input("Escolha uma opção: ")
-        if opcao == '1':
-            relatorio_pacientes_por_periodo()
-        elif opcao == '2':
-            relatorio_tipo_atendimento()
-        elif opcao == '3':
-            relatorio_atendimentos_por_bairro()
-        elif opcao == '4':
-            relatorio_historico_paciente()
-        elif opcao == '5':
-            break
+# Menu de autenticação e inicialização
+
+def autenticar_usuario():
+    print("=== Sistema de Gestão de Pacientes ===")
+    for _ in range(3):
+        usuario = input("Usuário: ").strip()
+        senha = input("Senha: ").strip()
+        if usuario == "admin" and senha == "UBS2025":
+            print("Acesso concedido.")
+            return True
         else:
-            print("Opção inválida.")
+            print("Usuário ou senha incorretos.\n")
+    print("Número de tentativas excedido. Encerrando o programa.")
+    return False
 
-def menu_principal():
+def menu():
     inicializar_arquivos()
     while True:
-        print("\n=== MENU PRINCIPAL ===")
+        print("\n--- MENU PRINCIPAL ---")
         print("1. Cadastrar paciente")
         print("2. Editar paciente")
         print("3. Excluir paciente")
@@ -42,6 +30,7 @@ def menu_principal():
         print("6. Relatórios")
         print("7. Sair")
         opcao = input("Escolha uma opção: ")
+
         if opcao == '1':
             cadastrar_paciente()
         elif opcao == '2':
@@ -55,10 +44,11 @@ def menu_principal():
         elif opcao == '6':
             menu_relatorios()
         elif opcao == '7':
-            print("Encerrando o sistema.")
+            print("Encerrando o programa.")
             break
         else:
             print("Opção inválida.")
 
 if _name_ == "_main_":
-    menu_principal()
+    if autenticar_usuario():
+        menu()
