@@ -32,15 +32,12 @@ def salvar_relatorio(dados, colunas, nome_base):
 
 # Função para gerar relatório de atendimentos por paciente
 def relatorio_pacientes_por_periodo():
-    print("Função carregada!")  # Confirma que esta versão está rodando
-
     pacientes, atendimentos = carregar_dados()
     data_inicio = ler_data("Data inicial (DD/MM/AAAA): ")
     data_fim = ler_data("Data final (DD/MM/AAAA): ")
 
     relatorio = []
 
-    # Coleta todos os atendimentos no período
     for at in atendimentos:
         try:
             data_atendimento = datetime.strptime(at['Data'], "%d/%m/%Y")
@@ -48,24 +45,24 @@ def relatorio_pacientes_por_periodo():
             continue  # Ignora registros com data inválida
 
         if data_inicio <= data_atendimento <= data_fim:
-            paciente = pacientes.get(at['CartaoSUS'], {'Nome': 'Desconhecido'})
+            cartao = at['CartaoSUS']
+            paciente = pacientes.get(cartao, {'Nome': 'Desconhecido'})
             relatorio.append({
                 'Nome': paciente['Nome'],
-                'CartaoSUS': at['CartaoSUS'],
+                'CartaoSUS': cartao,
                 'DataAtendimento': at['Data'],
                 'Tipo': at['Tipo']
             })
+
+    # Ordena por data decrescente
+    relatorio.sort(key=lambda x: datetime.strptime(x['DataAtendimento'], "%d/%m/%Y"), reverse=True)
 
     if not relatorio:
         print("Nenhum atendimento encontrado no período especificado.")
         return
 
-    # Ordena por data decrescente
-    relatorio.sort(key=lambda x: datetime.strptime(x['DataAtendimento'], "%d/%m/%Y"), reverse=True)
-
-    print("\n--- Atendimentos no período ---")
     for item in relatorio:
-        print(f"{item['DataAtendimento']} - {item['Tipo']} - {item['Nome']} - Cartão SUS: {item['CartaoSUS']}")
+        print(f"{item['DataAtendimento']} - {item['Nome']} - Cartão SUS: {item['CartaoSUS']} - Tipo: {item['Tipo']}")
 
     if input("Deseja salvar o relatório? (s/n): ").lower() == 's':
         salvar_relatorio(relatorio, ['Nome', 'CartaoSUS', 'DataAtendimento', 'Tipo'], 'relatorio_pacientes_periodo')
