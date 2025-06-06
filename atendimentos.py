@@ -3,9 +3,11 @@ from datetime import datetime
 from arquivos import ARQ_ATENDIMENTOS, carregar_dados
 from pacientes import ler_data
 
+# Função para registrar um novo atendimento manualmente
 def registrar_atendimento_manual():
     print("\n--- Registro de Atendimento ---")
 
+# Lê e valida a data do atendimento
     while True:
         data = ler_data("Data do atendimento (DD/MM/AAAA): ")
         if data.date() > datetime.today().date():
@@ -14,24 +16,34 @@ def registrar_atendimento_manual():
             break
 
     data_str = data.strftime("%d/%m/%Y")
+# Solicita e valida o Cartão SUS
     cartao_sus = input("Cartão SUS do paciente (15 dígitos): ").strip()
     if not cartao_sus.isdigit() or len(cartao_sus) != 15:
         print("Erro: Cartão SUS inválido.")
         return
 
+# Verifica se o paciente existe
     pacientes, _ = carregar_dados()
     if cartao_sus not in pacientes:
         print("Cartão SUS não encontrado. Registre o paciente primeiro.")
         return
 
-    tipo = input("Tipo de atendimento (consulta, vacinação, etc.): ").strip()
+# Coleta o tipo de atendimento e observações
+    while True:
+        tipo = input("Tipo de atendimento (consulta, vacinação, etc.): ").strip()
+        if tipo:
+            break
+        print("Erro: O tipo de atendimento não pode ficar em branco.")
+
     observacoes = input("Observações (opcional): ").strip()
 
+# Registra o atendimento no arquivo CSV
     with open(ARQ_ATENDIMENTOS, 'a', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
         writer.writerow([data_str, cartao_sus, tipo, observacoes])
     print("Atendimento registrado.")
 
+# Função para importar atendimentos em lote de um arquivo CSV
 def importar_atendimentos_csv():
     caminho = input("Digite o caminho do arquivo .csv com os atendimentos: ").strip()
     pacientes, _ = carregar_dados()
@@ -48,11 +60,13 @@ def importar_atendimentos_csv():
                     registros_ignorados += 1
                     continue
                 data, cartao_sus, tipo, obs = [r.strip() for r in row]
+# Valida a data do atendimento
                 try:
                     datetime.strptime(data, "%d/%m/%Y")
                 except ValueError:
                     registros_ignorados += 1
                     continue
+# Valida o Cartão SUS
                 if not cartao_sus.isdigit() or len(cartao_sus) != 15 or cartao_sus not in pacientes:
                     registros_ignorados += 1
                     continue
