@@ -74,4 +74,4 @@ def importar_atendimentos_csv():
                 registros_importados += 1
         print(f"Importação concluída: {registros_importados} registros importados, {registros_ignorados} ignorados.")
     except Exception as e:
-        print(f"Erro ao importar: {e}").
+        print(f"Erro ao importar: {e}")
