@@ -10,6 +10,7 @@ def ler_data(msg):
         except ValueError:
             print("Formato inválido. Use DD/MM/AAAA.")
 
+# Função para cadastrar um novo paciente
 def cadastrar_paciente():
     print("\n--- Cadastro de Paciente ---")
 
@@ -19,12 +20,14 @@ def cadastrar_paciente():
             break
         print("Erro: O nome não pode ficar em branco.")
 
+# Cadastra e valida o Cartão SUS
     while True:
         cartao_sus = input("Número do cartão SUS (15 dígitos): ").strip()
         if not (cartao_sus.isdigit() and len(cartao_sus) == 15):
             print("Erro: O cartão SUS deve conter exatamente 15 dígitos numéricos.")
             continue
 
+# Registra o novo paciente
         with open(ARQ_PACIENTES, 'r', encoding='utf-8') as f:
             for row in csv.DictReader(f):
                 if row['CartaoSUS'] == cartao_sus:
@@ -46,8 +49,10 @@ def cadastrar_paciente():
         writer.writerow([nome, cartao_sus, nascimento, bairro])
     print("Paciente cadastrado com sucesso!")
 
+# Função para editar os dados de um paciente
 def editar_paciente():
     cartao = input("Informe o Cartão SUS do paciente a editar (15 dígitos): ").strip()
+# Valida o Cartão SUS
     if not cartao.isdigit() or len(cartao) != 15:
         print("Erro: Cartão SUS inválido.")
         return
@@ -86,6 +91,7 @@ def editar_paciente():
         'Bairro': novo_bairro
     }
 
+# Se o paciente foi encontrado, reescreve o arquivo com os dados atualizados
     with open(ARQ_PACIENTES, 'w', newline='', encoding='utf-8') as f:
         writer = csv.DictWriter(f, fieldnames=['Nome', 'CartaoSUS', 'Nascimento', 'Bairro'])
         writer.writeheader()
@@ -93,6 +99,8 @@ def editar_paciente():
             writer.writerow(p)
     print("Dados atualizados com sucesso.")
 
+
+# Função para excluir um paciente
 def excluir_paciente():
     cartao = input("Informe o Cartão SUS do paciente a excluir: ").strip()
     pacientes, atendimentos = carregar_dados()
@@ -113,6 +121,7 @@ def excluir_paciente():
         for p in pacientes.values():
             writer.writerow(p)
 
+# Se o paciente foi encontrado, reescreve o arquivo sem ele
     with open(ARQ_ATENDIMENTOS, 'w', newline='', encoding='utf-8') as f:
         writer = csv.DictWriter(f, fieldnames=['Data', 'CartaoSUS', 'Tipo', 'Observacoes'])
         writer.writeheader()
