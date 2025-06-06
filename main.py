@@ -1,4 +1,3 @@
-Ok
 from arquivos import inicializar_arquivos
 from pacientes import cadastrar_paciente, editar_paciente, excluir_paciente
 from atendimentos import registrar_atendimento_manual, importar_atendimentos_csv
