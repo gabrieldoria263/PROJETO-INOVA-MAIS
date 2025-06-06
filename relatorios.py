@@ -30,40 +30,45 @@ def salvar_relatorio(dados, colunas, nome_base):
 
     print(f"Relatório salvo como: {caminho}")
 
+# Função para gerar relatório de atendimentos por paciente
 def relatorio_pacientes_por_periodo():
+    print("Função carregada!")  # Confirma que esta versão está rodando
+
     pacientes, atendimentos = carregar_dados()
     data_inicio = ler_data("Data inicial (DD/MM/AAAA): ")
     data_fim = ler_data("Data final (DD/MM/AAAA): ")
 
-    cartoes_exibidos = set()
     relatorio = []
 
-    atendimentos_ordenados = sorted(
-        (at for at in atendimentos if data_inicio <= datetime.strptime(at['Data'], "%d/%m/%Y") <= data_fim),
-        key=lambda x: datetime.strptime(x['Data'], "%d/%m/%Y"),
-        reverse=True
-    )
+    # Coleta todos os atendimentos no período
+    for at in atendimentos:
+        try:
+            data_atendimento = datetime.strptime(at['Data'], "%d/%m/%Y")
+        except ValueError:
+            continue  # Ignora registros com data inválida
 
-    for at in atendimentos_ordenados:
-        cartao = at['CartaoSUS']
-        if cartao not in cartoes_exibidos:
-            p = pacientes.get(cartao, {'Nome': 'Desconhecido'})
+        if data_inicio <= data_atendimento <= data_fim:
+            paciente = pacientes.get(at['CartaoSUS'], {'Nome': 'Desconhecido'})
             relatorio.append({
-                'Nome': p['Nome'],
-                'CartaoSUS': cartao,
-                'DataAtendimento': at['Data']
+                'Nome': paciente['Nome'],
+                'CartaoSUS': at['CartaoSUS'],
+                'DataAtendimento': at['Data'],
+                'Tipo': at['Tipo']
             })
-            cartoes_exibidos.add(cartao)
 
     if not relatorio:
-        print("Nenhum paciente encontrado no período especificado.")
+        print("Nenhum atendimento encontrado no período especificado.")
         return
 
+    # Ordena por data decrescente
+    relatorio.sort(key=lambda x: datetime.strptime(x['DataAtendimento'], "%d/%m/%Y"), reverse=True)
+
+    print("\n--- Atendimentos no período ---")
     for item in relatorio:
-        print(f"{item['DataAtendimento']} - {item['Nome']} - Cartão SUS: {item['CartaoSUS']}")
+        print(f"{item['DataAtendimento']} - {item['Tipo']} - {item['Nome']} - Cartão SUS: {item['CartaoSUS']}")
 
     if input("Deseja salvar o relatório? (s/n): ").lower() == 's':
-        salvar_relatorio(relatorio, ['Nome', 'CartaoSUS', 'DataAtendimento'], 'relatorio_pacientes_periodo')
+        salvar_relatorio(relatorio, ['Nome', 'CartaoSUS', 'DataAtendimento', 'Tipo'], 'relatorio_pacientes_periodo')
 
 def relatorio_tipo_atendimento():
     _, atendimentos = carregar_dados()
@@ -135,6 +140,8 @@ def relatorio_historico_paciente():
                          ['Nome', 'CartaoSUS', 'Nascimento', 'Bairro', 'Tipo', 'DataAtendimento'],
                          f"historico_{cartao}")
 
+
+# Função para exibir o menu de relatórios
 def menu_relatorios():
     while True:
         print("\n--- RELATÓRIOS ---")
