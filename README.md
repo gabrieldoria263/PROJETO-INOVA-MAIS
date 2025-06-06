@@ -5,14 +5,14 @@ Este é um sistema simples de gerenciamento de pacientes e atendimentos desenvol
 
 PROJETO-INOVA-MAIS/
 │
-├── arquivos.py             # Inicialização e manipulação de arquivos CSV
-├── pacientes.py            # Cadastro, edição e exclusão de pacientes
-├── atendimentos.py         # Registro, importação e exclusão de atendimentos
-├── relatorios.py           # Geração de relatórios diversos
-├── main.py                 # Interface principal e menu do sistema
-├── pacientes.csv           # Armazena dados dos pacientes
-├── atendimentos.csv        # Armazena registros de atendimentos
-└── relatorios/             # Pasta gerada automaticamente com os relatórios salvos
+-├── arquivos.py             # Inicialização e manipulação de arquivos CSV
+-├── pacientes.py            # Cadastro, edição e exclusão de pacientes
+-├── atendimentos.py         # Registro, importação e exclusão de atendimentos
+-├── relatorios.py           # Geração de relatórios diversos
+-├── main.py                 # Interface principal e menu do sistema
+-├── pacientes.csv           # Armazena dados dos pacientes
+-├── atendimentos.csv        # Armazena registros de atendimentos
+-└── relatorios/             # Pasta gerada automaticamente com os relatórios salvos
 
 ## ✅ Funcionalidades
 👤 Pacientes
