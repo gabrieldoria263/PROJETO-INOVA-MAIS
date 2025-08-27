@@ -1,0 +1,172 @@
+import csv
+import os
+from datetime import datetime
+from arquivos import ARQ_ATENDIMENTOS, carregar_dados
+from auxiliares import ler_data
+from banco import registrar_atendimento as registrar_atendimento_db
+import sqlite3
+
+def registrar_atendimento_manual(usuario):
+    """Registra um novo atendimento manualmente (banco + CSV)."""
+    print("\n--- Registro de Atendimento ---")
+
+    while True:
+        data = ler_data("Data do atendimento (DD/MM/AAAA): ")
+        if data.date() > datetime.today().date():
+            print("Erro: datas futuras não são aceitas.")
+        else:
+            break
+    data_str = data.strftime("%d/%m/%Y")
+
+    cartao_sus = input("Cartão SUS do paciente (15 dígitos): ").strip()
+    if not cartao_sus.isdigit() or len(cartao_sus) != 15:
+        print("Erro: Cartão SUS inválido.")
+        return
+
+    pacientes, _ = carregar_dados()
+    if cartao_sus not in pacientes:
+        print("Cartão SUS não encontrado. Registre o paciente primeiro.")
+        return
+
+    while True:
+        tipo = input("Tipo de atendimento (consulta, vacinação, etc.): ").strip()
+        if tipo:
+            break
+        print("Erro: O tipo de atendimento não pode ficar em branco.")
+
+    observacoes = input("Observações (opcional): ").strip()
+    registro_hora = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+
+    # Salva no banco
+    try:
+        registrar_atendimento_db(data_str, cartao_sus, tipo, observacoes, usuario, registro_hora)
+    except Exception as e:
+        print("Erro ao salvar no banco:", e)
+
+    # Salva no CSV
+    with open(ARQ_ATENDIMENTOS, 'a', newline='', encoding='utf-8') as f:
+        writer = csv.writer(f)
+        writer.writerow([data_str, cartao_sus, tipo, observacoes, usuario, registro_hora])
+
+    print(f"Atendimento registrado com sucesso (banco + CSV).")
+
+
+def listar_atendimentos():
+    """Lista todos os atendimentos com o nome do paciente."""
+    pacientes, atendimentos = carregar_dados()
+    if not atendimentos:
+        print("\nNão há atendimentos registrados.")
+        return
+
+    print("\n--- Lista de Atendimentos ---")
+    for at in atendimentos:
+        cartao_sus = at.get("CartaoSUS", "")
+        nome_paciente = pacientes.get(cartao_sus, {}).get("Nome", "NÃO ENCONTRADO")
+        data = at.get('Data', '')
+        tipo = at.get('Tipo', '')
+        obs = at.get('Observacoes', '')
+        print(f"{data} - {nome_paciente} ({cartao_sus}) - {tipo} - {obs}")
+
+
+def importar_atendimentos_csv(usuario):
+    """Importa atendimentos em lote sem duplicar registros existentes (banco + CSV)."""
+    pasta_csv = "importacoes"
+    os.makedirs(pasta_csv, exist_ok=True)
+
+    arquivos = [f for f in os.listdir(pasta_csv) if f.lower().endswith('.csv')]
+    if not arquivos:
+        print(f"Nenhum arquivo CSV encontrado na pasta '{pasta_csv}'.")
+        return
+
+    print("\nArquivos disponíveis para importação:")
+    for i, arquivo in enumerate(arquivos, start=1):
+        print(f"{i}. {arquivo}")
+
+    while True:
+        escolha = input(f"Escolha o arquivo (1-{len(arquivos)}): ").strip()
+        if escolha.isdigit() and 1 <= int(escolha) <= len(arquivos):
+            arquivo_selecionado = arquivos[int(escolha) - 1]
+            break
+        print("Opção inválida.")
+
+    caminho = os.path.join(pasta_csv, arquivo_selecionado)
+    pacientes, atendimentos_existentes = carregar_dados()
+
+    # Conjunto para evitar duplicatas
+    registros_existentes = {
+        (a['Data'], a['CartaoSUS'], a['Tipo'], a['Observacoes'])
+        for a in atendimentos_existentes
+    }
+
+    registros_importados = 0
+    registros_ignorados = 0
+
+    try:
+        with open(caminho, 'r', encoding='utf-8-sig') as f_in, \
+             open(ARQ_ATENDIMENTOS, 'a', newline='', encoding='utf-8') as f_out:
+
+            reader = csv.reader(f_in)
+            next(reader, None)  # pula cabeçalho
+            writer = csv.writer(f_out)
+
+            for i, row in enumerate(reader, start=2):
+                if len(row) not in (4, 6):
+                    print(f"Linha {i} ignorada: número de colunas incorreto ({len(row)}).")
+                    registros_ignorados += 1
+                    continue
+
+                data, cartao_sus, tipo, observacoes = [r.strip() for r in row[:4]]
+
+                # valida data
+                try:
+                    datetime.strptime(data, "%d/%m/%Y")
+                except ValueError:
+                    print(f"Linha {i} ignorada: data inválida ({data}).")
+                    registros_ignorados += 1
+                    continue
+
+                # valida cartão
+                if not cartao_sus.isdigit() or len(cartao_sus) != 15:
+                    print(f"Linha {i} ignorada: Cartão SUS inválido ({cartao_sus}).")
+                    registros_ignorados += 1
+                    continue
+
+                # paciente precisa existir
+                if cartao_sus not in pacientes:
+                    print(f"Linha {i} ignorada: Cartão SUS não cadastrado ({cartao_sus}).")
+                    registros_ignorados += 1
+                    continue
+
+                # evita duplicata
+                chave = (data, cartao_sus, tipo, observacoes)
+                if chave in registros_existentes:
+                    print(f"Linha {i} ignorada: registro duplicado.")
+                    registros_ignorados += 1
+                    continue
+
+                # usuário/registro
+                if len(row) == 6:
+                    usuario_csv, registro_hora = row[4].strip(), row[5].strip()
+                else:
+                    usuario_csv = usuario
+                    registro_hora = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+
+                # grava no CSV
+                writer.writerow([data, cartao_sus, tipo, observacoes, usuario_csv, registro_hora])
+
+                # grava no banco
+                try:
+                    registrar_atendimento_db(data, cartao_sus, tipo, observacoes, usuario_csv, registro_hora)
+                except Exception as e:
+                    print(f"Linha {i}: erro ao salvar no banco: {e}")
+                    registros_ignorados += 1
+                    continue
+
+                # atualiza conjunto e contadores
+                registros_existentes.add(chave)
+                registros_importados += 1
+
+        print(f"Importação concluída: {registros_importados} registros importados, {registros_ignorados} ignorados.")
+
+    except Exception as e:
+        print(f"Erro ao importar: {e}")
