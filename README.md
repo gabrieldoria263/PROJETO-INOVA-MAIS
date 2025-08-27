@@ -1,91 +1,139 @@
 # 🏥 Sistema de Gestão de Pacientes - UBS
-Este é um sistema simples de gerenciamento de pacientes e atendimentos desenvolvido em Python, com armazenamento em arquivos .csv. Ele é voltado para pequenas unidades de saúde (como UBS) que precisam registrar dados de pacientes e atendimentos de forma organizada e segura.
 
-## 📂 Estrutura do Projeto
+Este projeto é um **sistema de gestão de pacientes e atendimentos** voltado para **Unidades Básicas de Saúde (UBS)**.  
+Ele permite cadastrar pacientes, registrar atendimentos, importar dados em lote, gerar relatórios e manter as informações tanto em **arquivos CSV** quanto em um **banco de dados SQLite**.
 
-PROJETO-INOVA-MAIS/
-│
-├── arquivos.py             # Inicialização e manipulação de arquivos CSV
-├── pacientes.py            # Cadastro, edição e exclusão de pacientes
-├── atendimentos.py         # Registro, importação e exclusão de atendimentos
-├── relatorios.py           # Geração de relatórios diversos
-├── main.py                 # Interface principal e menu do sistema
-├── pacientes.csv           # Armazena dados dos pacientes
-├── atendimentos.csv        # Armazena registros de atendimentos
-└── relatorios/             # Pasta gerada automaticamente com os relatórios salvos
+---
 
-## ✅ Funcionalidades
-👤 Pacientes
-- Cadastro de novos pacientes
+## 📌 Funcionalidades
 
-- Edição dos dados de pacientes existentes
+- 🔑 **Autenticação de usuário** (admin / funcionário).  
+- 👤 **Gestão de Pacientes**:
+  - Cadastrar novos pacientes (com validações de nome, cartão SUS e data de nascimento).
+  - Editar informações já cadastradas.
+  - Excluir pacientes (e seus atendimentos vinculados).
+- 🩺 **Gestão de Atendimentos**:
+  - Registrar atendimento manual.
+  - Importar atendimentos em lote via CSV (evitando duplicatas).
+  - Listar atendimentos com nome do paciente.
+- 📊 **Relatórios**:
+  - Pacientes atendidos em um período.
+  - Quantidade por tipo de atendimento.
+  - Número de atendimentos por bairro.
+  - Histórico completo por paciente.
+  - Opção de exportar relatórios em **TXT** ou **CSV**.
+- 💾 **Armazenamento Híbrido**:
+  - Dados salvos em **SQLite (banco.db)**.
+  - Dados duplicados em **CSV** (`pacientes.csv` e `atendimentos.csv`) para compatibilidade e portabilidade.
 
-- Exclusão de pacientes e seus atendimentos
+---
 
-🩺 Atendimentos
-- Registro manual de atendimentos
+## 🛠️ Tecnologias Utilizadas
 
-- Importação de atendimentos via arquivo .csv
+- **Python 3.x**
+- **SQLite3** (persistência de dados)
+- **CSV** (armazenamento paralelo)
+- Estrutura modular em múltiplos arquivos:
+  - `main.py` → Menu principal e autenticação.
+  - `pacientes.py` → Cadastro, edição e exclusão de pacientes.
+  - `atendimentos.py` → Registro e importação de atendimentos.
+  - `arquivos.py` → Controle de CSVs.
+  - `banco.py` → Acesso ao banco SQLite.
+  - `relatorios.py` → Geração de relatórios.
+  - `auxiliares.py` → Funções auxiliares (ex.: leitura de datas).
 
-- Exclusão individual de atendimentos por Cartão SUS e data
+---
 
-📊 Relatórios
-- Pacientes atendidos em um período específico
+## ▶️ Como Executar
 
-- Contagem por tipo de atendimento (ex: consulta, vacina)
+1. **Clone o repositório**:
+   ```bash
+   git clone https://github.com/gabrieldoria263/PROJETO-INOVA-MAIS.git
+   ```
 
-- Número de atendimentos por bairro
+2. **(Opcional) Crie um ambiente virtual**:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate   # Linux/Mac
+   venv\Scripts\activate      # Windows
+   ```
 
-- Histórico completo de atendimentos de um paciente
+3. **Instale as dependências** (se necessário):
+   ```bash
+   pip install -r requirements.txt
+   ```
+   *(Atualmente o projeto só depende da biblioteca padrão do Python).*
 
-## 🔒 Autenticação
-Ao iniciar o sistema, o usuário deve fazer login com as seguintes credenciais:
+4. **Execute o sistema**:
+   ```bash
+   python main.py
+   ```
 
-- Usuário: admin
+5. **Você também pode executar o sistema localmente utilizando o Visual Studio Code (VS Code), seguindo os seguintes passos:
 
-- Senha: UBS2025
+- se de ter o Python certifique-se de que o pip esteja instalado em sua máquina.
+- Abra o VS Code e clone este repositório utilizando a função "Clone Git Repository...".
+- Abra a pasta do projeto no VS Code ("Arquivo" > "Abrir Pasta...").
+- Abra o terminal integrado do VS Code ("Terminal" > "Novo Terminal").
+- No terminal, navegue até o diretório onde se encontra o arquivo principal do sistema (ex: main.pyou similar).
+- Execute o sistema utilizando o comando: python nome_do_arquivo_principal.py(substitua nome_do_arquivo_principal.pypelo nome real do arquivo).
 
-Limite de 3 tentativas antes do encerramento automático do programa.
+Dica para VS Code: Você pode configurar um ambiente de execução (Run and Debug) no VS Code para facilitar o debug e a execução do seu projeto Python diretamente no terminal. Consulte a documentação do VS Code para Python para obter mais detalhes.
+---
 
-## ▶️ Como executar
-1- Certifique-se de que você possui Python 3 instalado.
+## 🔐 Usuários e Senhas
 
-2- Instale o projeto em um diretório local.
+O sistema vem com dois perfis pré-configurados (em `main.py`):
 
-3- Execute o arquivo principal:
-python main.py
+- **Admin** → usuário: `admin`, senha: `UBS2025`  
+- **Funcionário** → usuário: `funcionario`, senha: `fubs2025`
 
-4- **Você também pode executar o sistema localmente utilizando o **Visual Studio Code (VS Code)**, siga os seguintes passos:**
+---
 
--  Certifique-se de ter o **Python** e o **pip** instalados em sua máquina.
--  Abra o VS Code e clone este repositório utilizando a função "Clone Git Repository...".
--  Abra a pasta do projeto no VS Code ("File" > "Open Folder...").
--   Abra o terminal integrado do VS Code ("Terminal" > "New Terminal").
--  No terminal, navegue até o diretório onde se encontra o arquivo principal do sistema (ex: `main.py` ou similar).
--  Execute o sistema utilizando o comando: `python nome_do_arquivo_principal.py` (substitua `nome_do_arquivo_principal.py` pelo nome real do arquivo).
+## 📂 Estrutura de Arquivos
 
-**Dica para VS Code:** Você pode configurar um ambiente de execução (Run and Debug) no VS Code para facilitar o debug e a execução do seu projeto Python diretamente no terminal. Consulte a documentação do VS Code para Python para mais detalhes.
+```
+📦 sistema-ubs
+├── main.py
+├── pacientes.py
+├── atendimentos.py
+├── arquivos.py
+├── banco.py
+├── auxiliares.py
+├── relatorios.py
+├── pacientes.csv
+├── atendimentos.csv
+├── banco.db
+└── importacoes/         # pasta usada para importar CSVs em lote
+```
 
-## 📝 Requisitos
-- Python 3.6 ou superior
+---
 
-- Sistema operacional compatível com arquivos .csv (Windows, Linux, MacOS)
+## 📝 Exemplos de Uso
 
-## 📦 Exemplo de Importação de Atendimentos (.csv)
-O arquivo CSV para importação deve seguir o seguinte formato (com cabeçalho):
+- **Cadastrar paciente** → Opção 1 no menu principal.  
+- **Registrar atendimento manual** → Opção 4.  
+- **Importar atendimentos via CSV** → Coloque o arquivo na pasta `importacoes/` e use a opção 5.  
+- **Gerar relatórios** → Acesse a opção 7 no menu principal.
 
-swift
-Data,CartaoSUS,Tipo,Observacoes
-01/05/2025,123456789012345,Consulta,Paciente com dor de cabeça
-03/05/2025,987654321098765,Vacinação,Dose de reforço aplicada
+---
 
-## 📁 Relatórios
-Os relatórios gerados são salvos na pasta relatorios/, podendo ser exportados em .csv ou .txt com formatação adequada para impressão ou análise.
+## 📌 Observações
 
-## 💡 Objetivo do Projeto
-Este sistema foi desenvolvido como parte de um projeto acadêmico para a disciplina de Gerenciamento de Projetos, com foco em inovação e uso de tecnologias simples e acessíveis para facilitar o atendimento à população em unidades de saúde públicas.
+- O sistema mantém dados em **duplicidade** (Banco SQLite + CSV) para garantir portabilidade e compatibilidade.  
+- Ao excluir um paciente, todos os seus atendimentos também são removidos.  
+- Relatórios são salvos na pasta `relatorios/` com nome identificando usuário e data/hora.  
 
-## 👨‍💻 Autores
-Nome: Rosevaldo, Gabriel, Willian, Antonio, Josivanio, Jailton, Geilson e Cristiano
-Instituição: Instituto Federal de Sergipe (IFS)
-Ano: 2025
+---
+
+## 📄 Licença
+
+Este projeto é distribuído sob a licença **MIT**.  
+Sinta-se à vontade para usar, modificar e contribuir.
+
+---
+
+👨‍💻 **Desenvolvido para fins acadêmicos e de aprendizado.**
+
+Autores - Antônio Oliveira, Cristiano dos Santos, Gabriel Henrique, Geilson Santos, Jailton Santos, Josivanio Rodrigues, José Rosevaldo, Willian Aragão
+Instituto Federal de Sergipe - Campus Propriá
