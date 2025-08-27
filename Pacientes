@@ -1,0 +1,160 @@
+import csv
+from datetime import datetime
+from arquivos import ARQ_PACIENTES, ARQ_ATENDIMENTOS, carregar_dados
+from banco import adicionar_paciente as adicionar_paciente_db
+from banco import inicializar_banco
+import sqlite3
+
+# Garante que o banco esteja criado
+inicializar_banco()
+
+
+def cadastrar_paciente():
+    """Cadastra um novo paciente com validações (salva no banco e no CSV)."""
+    print("\n--- Cadastro de Paciente ---")
+
+    # Nome (obrigatório, sem números)
+    while True:
+        nome = input("Nome completo: ").strip()
+        if not nome:
+            print("Erro: O nome não pode ficar em branco.")
+            continue
+        if any(ch.isdigit() for ch in nome):
+            print("Erro: O nome não pode conter números.")
+            continue
+        break
+
+    # Cartão SUS (15 dígitos, único)
+    while True:
+        cartao_sus = input("Número do cartão SUS (15 dígitos): ").strip()
+        if not (cartao_sus.isdigit() and len(cartao_sus) == 15):
+            print("Erro: O cartão SUS deve conter exatamente 15 dígitos numéricos.")
+            continue
+        pacientes, _ = carregar_dados()
+        if cartao_sus in pacientes:
+            print("Erro: Este cartão SUS já está cadastrado.")
+            continue
+        break
+
+    # Nascimento
+    while True:
+        nascimento = input("Data de nascimento (DD/MM/AAAA): ").strip()
+        try:
+            datetime.strptime(nascimento, "%d/%m/%Y")
+            break
+        except ValueError:
+            print("Erro: Data inválida. Use o formato DD/MM/AAAA.")
+
+    # Endereço e Bairro
+    endereco = input("Endereço (opcional): ").strip()
+    while True:
+        bairro = input("Bairro: ").strip()
+        if not bairro:
+            print("Erro: O bairro não pode ficar em branco.")
+            continue
+        break
+
+    # Salva no banco
+    try:
+        adicionar_paciente_db(cartao_sus, nome, nascimento, endereco, bairro)
+    except Exception as e:
+        print("Erro ao salvar no banco:", e)
+
+    # Salva também no CSV
+    with open(ARQ_PACIENTES, 'a', newline='', encoding='utf-8') as f:
+        writer = csv.writer(f)
+        writer.writerow([cartao_sus, nome, nascimento, endereco, bairro])
+
+    print("Paciente cadastrado com sucesso (banco + CSV)!")
+
+
+def editar_paciente():
+    """Edita os dados de um paciente existente (atualiza banco e CSV)."""
+    cartao = input("Informe o Cartão SUS do paciente a editar (15 dígitos): ").strip()
+    if not cartao.isdigit() or len(cartao) != 15:
+        print("Erro: Cartão SUS inválido.")
+        return
+
+    pacientes, _ = carregar_dados()
+    paciente = pacientes.get(cartao)
+    if not paciente:
+        print("Paciente não encontrado.")
+        return
+
+    print(f"Editando paciente: {paciente['Nome']}")
+    novo_nome = input(f"Novo nome [{paciente['Nome']}]: ").strip() or paciente['Nome']
+    nova_data_nasc = input(f"Nova data de nascimento [{paciente['Nascimento']}]: ").strip() or paciente['Nascimento']
+    novo_endereco = input(f"Novo endereço [{paciente.get('Endereco','')}]: ").strip() or paciente.get('Endereco','')
+    novo_bairro = input(f"Novo bairro [{paciente['Bairro']}]: ").strip() or paciente['Bairro']
+
+    # Atualiza no banco
+    conn = sqlite3.connect("banco.db")
+    cur = conn.cursor()
+    cur.execute("""
+        UPDATE pacientes
+        SET nome=?, nascimento=?, endereco=?, bairro=?
+        WHERE cartao_sus=?
+    """, (novo_nome, nova_data_nasc, novo_endereco, novo_bairro, cartao))
+    conn.commit()
+    conn.close()
+
+    # Atualiza no dicionário (CSV)
+    pacientes[cartao] = {
+        'CartaoSUS': cartao,
+        'Nome': novo_nome,
+        'Nascimento': nova_data_nasc,
+        'Endereco': novo_endereco,
+        'Bairro': novo_bairro
+    }
+
+    # Reescreve CSV
+    with open(ARQ_PACIENTES, 'w', newline='', encoding='utf-8') as f:
+        writer = csv.DictWriter(f, fieldnames=['CartaoSUS', 'Nome', 'Nascimento', 'Endereco', 'Bairro'])
+        writer.writeheader()
+        for p in pacientes.values():
+            writer.writerow(p)
+
+    print("Paciente atualizado com sucesso (banco + CSV).")
+
+
+def excluir_paciente():
+    """Exclui um paciente e seus atendimentos (banco + CSV)."""
+    cartao = input("Informe o Cartão SUS do paciente a excluir (15 dígitos): ").strip()
+    if not cartao.isdigit() or len(cartao) != 15:
+        print("Erro: Cartão SUS inválido.")
+        return
+
+    pacientes, atendimentos = carregar_dados()
+    if cartao not in pacientes:
+        print("Paciente não encontrado.")
+        return
+
+    confirm = input(f"Tem certeza que deseja excluir {pacientes[cartao]['Nome']}? (s/n): ").lower()
+    if confirm != 's':
+        return
+
+    # Remove do banco
+    conn = sqlite3.connect("banco.db")
+    cur = conn.cursor()
+    cur.execute("DELETE FROM atendimentos WHERE cartao_sus=?", (cartao,))
+    cur.execute("DELETE FROM pacientes WHERE cartao_sus=?", (cartao,))
+    conn.commit()
+    conn.close()
+
+    # Remove do CSV
+    del pacientes[cartao]
+    atendimentos = [a for a in atendimentos if a['CartaoSUS'] != cartao]
+
+    with open(ARQ_PACIENTES, 'w', newline='', encoding='utf-8') as f:
+        writer = csv.DictWriter(f, fieldnames=['CartaoSUS', 'Nome', 'Nascimento', 'Endereco', 'Bairro'])
+        writer.writeheader()
+        for p in pacientes.values():
+            writer.writerow(p)
+
+    with open(ARQ_ATENDIMENTOS, 'w', newline='', encoding='utf-8') as f:
+        writer = csv.DictWriter(f, fieldnames=['Data','CartaoSUS','Tipo','Observacoes','Usuario','Registro'])
+        writer.writeheader()
+        for a in atendimentos:
+            writer.writerow(a)
+
+    print("Paciente removido com sucesso (banco + CSV).")
