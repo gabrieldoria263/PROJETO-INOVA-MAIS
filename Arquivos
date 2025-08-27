@@ -1,0 +1,41 @@
+import os
+import csv
+
+ARQ_PACIENTES = 'pacientes.csv'
+ARQ_ATENDIMENTOS = 'atendimentos.csv'
+
+def inicializar_arquivos():
+    """Cria arquivos CSV com cabeçalho, se não existirem."""
+    if not os.path.exists(ARQ_PACIENTES):
+        with open(ARQ_PACIENTES, 'w', newline='', encoding='utf-8') as f:
+            writer = csv.writer(f)
+            writer.writerow(['CartaoSUS', 'Nome', 'Nascimento', 'Endereco', 'Bairro'])
+
+    if not os.path.exists(ARQ_ATENDIMENTOS):
+        with open(ARQ_ATENDIMENTOS, 'w', newline='', encoding='utf-8') as f:
+            writer = csv.writer(f)
+            writer.writerow(['Data', 'CartaoSUS', 'Tipo', 'Observacoes', 'Usuario', 'Registro'])
+
+def carregar_dados():
+    """Carrega os dados dos arquivos CSV.
+
+    Retorna:
+        pacientes: dict[str, dict] mapeando CartaoSUS -> dados do paciente
+        atendimentos: list[dict] lista de atendimentos
+    """
+    pacientes = {}
+    if os.path.exists(ARQ_PACIENTES):
+        with open(ARQ_PACIENTES, 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                # manter linha completa, inclusive CartaoSUS
+                pacientes[row['CartaoSUS']] = row
+
+    atendimentos = []
+    if os.path.exists(ARQ_ATENDIMENTOS):
+        with open(ARQ_ATENDIMENTOS, 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                atendimentos.append(row)
+
+    return pacientes, atendimentos
