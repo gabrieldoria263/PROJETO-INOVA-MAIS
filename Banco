@@ -1,0 +1,76 @@
+import sqlite3
+
+DB_NAME = "banco.db"
+
+
+def inicializar_banco():
+    """Cria as tabelas de pacientes e atendimentos, se não existirem."""
+    conn = sqlite3.connect(DB_NAME)
+    cur = conn.cursor()
+
+    # Tabela de pacientes
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS pacientes (
+        cartao_sus TEXT PRIMARY KEY,
+        nome TEXT NOT NULL,
+        nascimento TEXT NOT NULL,
+        endereco TEXT,
+        bairro TEXT NOT NULL
+    )
+    """)
+
+    # Tabela de atendimentos
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS atendimentos (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        data TEXT NOT NULL,
+        cartao_sus TEXT NOT NULL,
+        tipo TEXT NOT NULL,
+        observacoes TEXT,
+        usuario TEXT NOT NULL,
+        registro TEXT NOT NULL,
+        FOREIGN KEY (cartao_sus) REFERENCES pacientes(cartao_sus)
+    )
+    """)
+
+    conn.commit()
+    conn.close()
+
+
+def adicionar_paciente(cartao_sus, nome, nascimento, endereco, bairro):
+    """Adiciona um paciente novo no banco."""
+    conn = sqlite3.connect(DB_NAME)
+    cur = conn.cursor()
+    cur.execute("""
+        INSERT INTO pacientes (cartao_sus, nome, nascimento, endereco, bairro)
+        VALUES (?, ?, ?, ?, ?)
+    """, (cartao_sus, nome, nascimento, endereco, bairro))
+    conn.commit()
+    conn.close()
+
+
+def registrar_atendimento(data, cartao_sus, tipo, observacoes, usuario, registro):
+    """Registra um atendimento vinculado a um paciente existente."""
+    conn = sqlite3.connect(DB_NAME)
+    cur = conn.cursor()
+    cur.execute("""
+        INSERT INTO atendimentos (data, cartao_sus, tipo, observacoes, usuario, registro)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """, (data, cartao_sus, tipo, observacoes, usuario, registro))
+    conn.commit()
+    conn.close()
+
+
+def listar_atendimentos():
+    """Lista todos os atendimentos com nome do paciente."""
+    conn = sqlite3.connect(DB_NAME)
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT a.data, p.nome, p.cartao_sus, a.tipo, a.observacoes
+        FROM atendimentos a
+        JOIN pacientes p ON a.cartao_sus = p.cartao_sus
+        ORDER BY a.data DESC
+    """)
+    registros = cur.fetchall()
+    conn.close()
+    return registros
