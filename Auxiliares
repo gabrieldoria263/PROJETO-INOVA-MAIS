@@ -1,0 +1,10 @@
+from datetime import datetime
+
+def ler_data(msg):
+    """Lê e valida uma data no formato DD/MM/AAAA."""
+    while True:
+        data_str = input(msg).strip()
+        try:
+            return datetime.strptime(data_str, "%d/%m/%Y")
+        except ValueError:
+            print("Formato inválido. Use DD/MM/AAAA.")
